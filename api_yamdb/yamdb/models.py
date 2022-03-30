@@ -1,5 +1,6 @@
 from django.db import models
 from django.core.validators import MinValueValidator, MaxValueValidator
+import datetime
 
 class Category(models.Model):
     name = models.CharField(
@@ -33,10 +34,17 @@ class Title(models.Model):
         help_text='Название произведения',
     )
     year = models.IntegerField(
+        validators=[
+            MinValueValidator(1800),
+            MaxValueValidator(datetime.date.today().year),
+        ],
         help_text='Год создания'
     )
     rating = models.IntegerField(
-        validators=[MinValueValidator(1),MaxValueValidator(5),],
+        validators=[
+            MinValueValidator(1),
+            MaxValueValidator(5),
+        ],
         help_text='Рейтинг'
     )
     description = models.CharField(
