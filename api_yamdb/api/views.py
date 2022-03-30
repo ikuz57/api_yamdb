@@ -16,19 +16,20 @@ class CategoriesViewSet(ListCreateDelete):
     queryset = Category.objects.all()
     serializer_class = CategorySerialaizer
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('=name',)
-
+    search_fields = ('=slug',)
+    lookup_field = 'slug'
 
 class GenresViewSet(ListCreateDelete):
     queryset = Genre.objects.all()
     serializer_class = GenreSerialaizer
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('=name',)
-
+    search_fields = ('=slug',)
+    lookup_field = 'slug'
 
 class TitlesViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerialaizer
-    filter_backends = (DjangoFilterBackend)
+    filter_backends = (DjangoFilterBackend,)
     filterset_fields = ('category', 'genre', 'name', 'year')
+
 

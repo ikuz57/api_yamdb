@@ -53,18 +53,69 @@ class Title(models.Model):
         blank=True,
         help_text='Описание'
     )
-    genre = models.ForeignKey(
+    genre = models.ManyToManyField(
         Genre,
-        on_delete=models.CASCADE,
+        through='GenreTitle',
         related_name='titles',
         help_text='Жанр'
     )
-    category = models.ForeignKey(
+    category = models.ManyToManyField(
         Category,
-        on_delete=models.CASCADE,
+        through='CategoryTitle',
         related_name='titles',
         help_text='Категория'
     )
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['name','year',],
+                name='unique_categorytitle')
+        ]
+
     def __str__(self):
         return self.name
+
+class CategoryTitle(models.Model):
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.CASCADE,
+        null=True
+    )
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        null=True
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['category', 'title',],
+                name='unique_categorytitle')
+        ]
+
+    def __str__(self):
+        return f'{self.title} {self.category}' 
+
+class GenreTitle(models.Model):
+    genre = models.ForeignKey(
+        Genre,
+        on_delete=models.CASCADE,
+        null=True
+    )
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        null=True
+    )
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=['genre', 'title',],
+                name='unique_genretitle')
+        ]
+
+    def __str__(self):
+        return f'{self.title} {self.genre}' 
