@@ -70,7 +70,7 @@ class Title(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=['name','year',],
-                name='unique_categorytitle')
+                name='unique_title')
         ]
 
     def __str__(self):
