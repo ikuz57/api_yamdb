@@ -1,11 +1,10 @@
 from django.urls import include, path
-from .views import MyTokenObtainPairView, signUp
+from .views import signup, token_obtain
 
 app_name = 'users'
 
 
 urlpatterns = [
-    path('auth/token/', MyTokenObtainPairView.as_view(),
-         name='my_token_obtain_pair'),
-    path('auth/signup/', signUp, name='signUp'),
+    path('auth/token/', token_obtain, name='token_obtain'),
+    path('auth/signup/', signup, name='signup'),
 ]

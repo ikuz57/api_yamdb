@@ -15,7 +15,6 @@ class CustomAccountManager(BaseUserManager):
         user.set_password(password)
         user.is_staff = True
         user.is_superuser = True
-        user.is_verified = True
         user.save(using=self._db)
         return user
 
@@ -31,7 +30,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
         blank=True, null=True)
     code = models.IntegerField(blank=True, null=True)
     is_staff = models.BooleanField(default=False)
-    is_verified = models.BooleanField(default=False)
     REQUIRED_FIELDS = ['email']
     USERNAME_FIELD = 'username'
 

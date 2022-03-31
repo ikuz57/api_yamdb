@@ -2,20 +2,17 @@ from rest_framework.decorators import api_view
 from rest_framework.response import Response
 from django.contrib.auth import get_user_model
 from rest_framework import status
-from .serializers import CustomUserSerializer, MyTokenObtainPairSerializer
+from .serializers import CustomUserSerializer
 from django.core.mail import send_mail
 import random
-from rest_framework_simplejwt.views import TokenObtainPairView
+from rest_framework_simplejwt.tokens import RefreshToken
+from django.shortcuts import get_object_or_404
 
 User = get_user_model()
 
 
-class MyTokenObtainPairView(TokenObtainPairView):
-    serializer_class = MyTokenObtainPairSerializer
-
-
 @api_view(['POST'])
-def signUp(request):
+def signup(request):
     serializer = CustomUserSerializer(data=request.data)
     if serializer.is_valid():
         confirmation_code = random.randint(10000, 20000)
@@ -31,3 +28,19 @@ def signUp(request):
         )
         return Response(serializer.data, status=status.HTTP_201_CREATED)
     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['POST'])
+def token_obtain(request):
+    try:
+        username = request.data['username']
+        code = request.data['confirmation_code']
+        user = get_object_or_404(User, username=username)
+        if username == user.username and code == str(user.code):
+            access_token = RefreshToken.for_user(user).access_token
+            data = {
+                'token': str(access_token),
+            }
+        return Response(data)
+    except:
+        return Response('Data is invalid', status=status.HTTP_400_BAD_REQUEST)
