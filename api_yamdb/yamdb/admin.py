@@ -34,3 +34,4 @@ site.register(Comment, CommentAdmin)
 site.register(Genre, GenreAdmin)
 site.register(Revew, ReviewAdmin)
 site.register(Title, TitleAdmin)
+
