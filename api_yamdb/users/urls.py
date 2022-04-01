@@ -5,7 +5,7 @@ app_name = 'users'
 
 
 urlpatterns = [
-    path('auth/token/', token_obtain, name='token_obtain'),
-    path('auth/signup/', signup, name='signup'),
-    # path('users/me/', patch_user_data, name='patch_user_data'),
+    path('v1/auth/token/', token_obtain, name='token_obtain'),
+    path('v1/auth/signup/', signup, name='signup'),
+    path('v1/users/me/', patch_user_data, name='patch_user_data'),
 ]

@@ -8,7 +8,6 @@ import random
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import AllowAny
-from rest_framework.exceptions import PermissionDenied
 
 User = get_user_model()
 
@@ -50,10 +49,11 @@ def token_obtain(request):
         return Response('Data is invalid', status=status.HTTP_400_BAD_REQUEST)
 
 
-# @api_view(['PATCH'])
-# def patch_user_data(request):
-#     serializer = CustomUserSerializer(data=request.data, partial=True)
-#     if serializer.is_valid():
-#         serializer.save()
-#         return Response(serializer.data, status=status.HTTP_201_CREATED)
-#     return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+@api_view(['PATCH'])
+def patch_user_data(request):
+    user = get_object_or_404(User, username=request.data['username'])
+    serializer = CustomUserSerializer(user, data=request.data, partial=True)
+    if serializer.is_valid():
+        serializer.save()
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+    return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)

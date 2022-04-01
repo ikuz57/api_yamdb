@@ -1,4 +1,4 @@
-from django.contrib.admin import ModelAdmin,site
+from django.contrib.admin import ModelAdmin, site
 
 from .models import Category, Comment, Genre, Revew, Title
 
@@ -23,15 +23,14 @@ class ReviewAdmin(ModelAdmin):
     list_filter = ('author', 'pub_date')
 
 
-class TitleAdmin(ModelAdmin):
-    list_display = ('id', 'name', 'year', 'category', 'genre', 'description')
-    search_fields = ('description',)
-    list_filter = ('genre', 'year')
+# class TitleAdmin(ModelAdmin):
+#     list_display = ('id', 'name', 'year', 'category', 'genre', 'description')
+    # search_fields = ('description',)
+    # list_filter = ('genre', 'year')
 
 
 site.register(Category, CategoryAdmin)
 site.register(Comment, CommentAdmin)
 site.register(Genre, GenreAdmin)
 site.register(Revew, ReviewAdmin)
-site.register(Title, TitleAdmin)
-
+# site.register(Title, TitleAdmin)
