@@ -50,14 +50,6 @@ class Title(models.Model):
         verbose_name='Год создания',
         help_text='Введите год создания произведения',
     )
-
-    rating = models.IntegerField(
-        validators=[
-            MinValueValidator(1),
-            MaxValueValidator(5),
-        ],
-        help_text='Рейтинг'
-    )
     description = models.CharField(
         max_length=400,
         null=True,
@@ -132,7 +124,7 @@ class GenreTitle(models.Model):
         return f'{self.title} {self.genre}' 
 
 
-class Revew(models.Model):
+class Review(models.Model):
     title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
@@ -190,7 +182,7 @@ class Comment(models.Model):
         help_text='Укажите произведение',
     )
     review = models.ForeignKey(
-        Revew,
+        Review,
         on_delete=models.CASCADE,
         related_name='comments',
         verbose_name='Отзыв',
