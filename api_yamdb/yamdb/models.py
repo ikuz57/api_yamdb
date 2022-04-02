@@ -52,16 +52,6 @@ class Title(models.Model):
         verbose_name='Год создания',
         help_text='Введите год создания произведения',
     )
-
-    rating = models.IntegerField(
-        validators=[
-            MinValueValidator(1),
-            MaxValueValidator(5),
-        ],
-        null=True,
-        blank=True,
-        help_text='Рейтинг'
-    )
     description = models.CharField(
         max_length=400,
         null=True,
@@ -86,36 +76,12 @@ class Title(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['name','year',],
+                fields=['name', 'year', 'category', ],
                 name='unique_title')
         ]
 
     def __str__(self):
         return self.name
-
-
-class CategoryTitle(models.Model):
-    category = models.ForeignKey(
-        Category,
-        on_delete=models.CASCADE,
-        null=True
-    )
-    title = models.ForeignKey(
-        Title,
-        on_delete=models.CASCADE,
-        null=True
-    )
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=['category', 'title',],
-                name='unique_categorytitle')
-        ]
-
-    def __str__(self):
-        return f'{self.title} {self.category}' 
-
 
 class GenreTitle(models.Model):
     genre = models.ForeignKey(
@@ -202,6 +168,13 @@ class Comment(models.Model):
         related_name='comments',
         verbose_name='Произведение',
         help_text='Укажите произведение',
+    )
+    review = models.ForeignKey(
+        Review,
+        on_delete=models.CASCADE,
+        related_name='comments',
+        verbose_name='Отзыв',
+        help_text='Укажите отзыв',
     )
     pub_date = models.DateTimeField(
         auto_now_add=True,
