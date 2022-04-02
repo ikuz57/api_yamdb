@@ -69,7 +69,7 @@ class TitleSerialaizer(serializers.ModelSerializer):
 
 class ReviewSerializer(serializers.ModelSerializer):
     title = serializers.SlugRelatedField(
-        slug_field='slug',
+        slug_field='id',
         queryset=Title.objects.all()
     )
 
@@ -80,11 +80,11 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     title = serializers.SlugRelatedField(
-        slug_field='slug',
+        slug_field='id',
         queryset=Title.objects.all()
     )
     review = serializers.SlugRelatedField(
-        slug_field='slug',
+        slug_field='id',
         queryset=Review.objects.all()
     )
 

@@ -83,6 +83,7 @@ class Title(models.Model):
     def __str__(self):
         return self.name
 
+
 class GenreTitle(models.Model):
     genre = models.ForeignKey(
         Genre,
@@ -98,7 +99,7 @@ class GenreTitle(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['genre', 'title',],
+                fields=['genre', 'title', ],
                 name='unique_genretitle')
         ]
 
