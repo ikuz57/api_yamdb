@@ -33,4 +33,8 @@ site.register(Category, CategoryAdmin)
 site.register(Comment, CommentAdmin)
 site.register(Genre, GenreAdmin)
 site.register(Review, ReviewAdmin)
+<<<<<<< HEAD
 site.register(Title, TitleAdmin)
+=======
+site.register(Title)
+>>>>>>> task/categories-genres-titles
