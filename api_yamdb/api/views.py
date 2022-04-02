@@ -1,7 +1,7 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, mixins, filters
-
+from rest_framework import viewsets, mixins, filters, permissions
+from users.permissions import IsAdmin, IsModerator
 from .serializers import (CategorySerialaizer, GenreSerialaizer,
                           TitleSerialaizer, ReviewSerializer,
                           CommentSerializer)
@@ -12,14 +12,20 @@ from users.permissions import IsAuthorOrReadOnly
 
 class ListCreateDelete(mixins.CreateModelMixin, mixins.DestroyModelMixin,
                        mixins.ListModelMixin, viewsets.GenericViewSet):
-    pass
+
+    def get_permissions(self):
+        if self.action == 'list':
+            permission_classes = [IsAuthorOrReadOnly]
+        else:
+           permission_classes = [IsAdmin]
+        return [permission() for permission in permission_classes]
 
 
 class CategoriesViewSet(ListCreateDelete):
     queryset = Category.objects.all()
     serializer_class = CategorySerialaizer
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('=slug',)
+    search_fields = ('=name',)
     lookup_field = 'slug'
 
 
@@ -27,7 +33,7 @@ class GenresViewSet(ListCreateDelete):
     queryset = Genre.objects.all()
     serializer_class = GenreSerialaizer
     filter_backends = (filters.SearchFilter,)
-    search_fields = ('=slug',)
+    search_fields = ('=name',)
     lookup_field = 'slug'
 
 
@@ -36,6 +42,13 @@ class TitlesViewSet(viewsets.ModelViewSet):
     serializer_class = TitleSerialaizer
     filter_backends = (DjangoFilterBackend,)
     filterset_fields = ('category__slug', 'genre__slug', 'name', 'year')
+
+    def get_permissions(self):
+        if self.action == 'list':
+            permission_classes = [IsAuthorOrReadOnly]
+        else:
+           permission_classes = [IsAdmin]
+        return [permission() for permission in permission_classes]
 
 
 class ReviewViewset(viewsets.ModelViewSet):

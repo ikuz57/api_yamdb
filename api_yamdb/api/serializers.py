@@ -1,6 +1,6 @@
 from audioop import avg
 from email.policy import default
-from rest_framework import serializers, permissions
+from rest_framework import serializers
 from django.shortcuts import get_object_or_404
 from django.db.models import Avg
 from rest_framework.validators import UniqueTogetherValidator
@@ -10,14 +10,12 @@ from yamdb.models import (Category, Genre, Title, GenreTitle,
 
 
 class CategorySerialaizer(serializers.ModelSerializer):
-    # permission_classes = (IsModerator,)
     class Meta:
         model = Category
         fields = ('name', 'slug',)
 
 
 class GenreSerialaizer(serializers.ModelSerializer):
-    # permission_classes = (IsModerator,)
     class Meta:
         model = Genre
         fields = ('name', 'slug',)
@@ -37,7 +35,6 @@ class TitleSerialaizer(serializers.ModelSerializer):
         required=True
     )
     rating = serializers.SerializerMethodField()
-   # permission_classes = (IsModerator,)
 
     class Meta:
         model = Title
