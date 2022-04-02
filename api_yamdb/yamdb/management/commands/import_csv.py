@@ -1,16 +1,20 @@
 from django.core.management.base import BaseCommand
 import csv
+from pathlib import Path
 
 from yamdb import models
 
+root = Path(__file__).parent.parent.parent.parent
+static_data_dir = Path(root, 'static', 'data')
+
 FILE_LIST = {
-    'api_yamdb\\static\\data\\category.csv': models.Category,
-    'api_yamdb\\static\\data\\genre.csv': models.Genre,
-    'api_yamdb\\static\\data\\titles.csv': models.Title,
-    'api_yamdb\\static\\data\\genre_title.csv': models.GenreTitle,
-    'api_yamdb\\static\\data\\users.csv': models.User,
-    'api_yamdb\\static\\data\\review.csv': models.Review,
-    'api_yamdb\\static\\data\\comments.csv': models.Comment,
+    Path(static_data_dir, 'category.csv'): models.Category,
+    Path(static_data_dir, 'genre.csv'): models.Genre,
+    Path(static_data_dir, 'titles.csv'): models.Title,
+    Path(static_data_dir, 'genre_title.csv'): models.GenreTitle,
+    Path(static_data_dir, 'users.csv'): models.User,
+    Path(static_data_dir, 'review.csv'): models.Review,
+    Path(static_data_dir, 'comments.csv'): models.Comment,
 }
 
 
