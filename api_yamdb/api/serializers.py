@@ -1,6 +1,9 @@
 from rest_framework import serializers
 from rest_framework.validators import UniqueTogetherValidator
-from yamdb.models import Category, Genre, Title, CategoryTitle, GenreTitle
+
+from .models import (Category, Genre, Title, CategoryTitle, GenreTitle,
+                          Review, Comment)
+
 
 class CategorySerialaizer(serializers.ModelSerializer):
     
@@ -8,11 +11,13 @@ class CategorySerialaizer(serializers.ModelSerializer):
         model = Category
         fields = ('name', 'slug',)
 
+
 class GenreSerialaizer(serializers.ModelSerializer):
 
     class Meta: 
         model = Genre
         fields = ('name', 'slug',)
+
 
 class TitleSerialaizer(serializers.ModelSerializer):
     genre = serializers.SlugRelatedField(
@@ -39,3 +44,32 @@ class TitleSerialaizer(serializers.ModelSerializer):
                 fields=('name', 'year')
             )
         ]
+
+
+class ReviewSerializer(serializers.ModelSerializer):
+    title = serializers.SlugRelatedField(
+        slug_field='slug',
+        many=True,
+        queryset=Title.objects.all()
+    )
+
+    class Meta:
+        model = Review
+        fields = '__all__'
+
+
+class CommentSerializer(serializers.ModelSerializer):
+    title = serializers.SlugRelatedField(
+        slug_field='slug',
+        many=True,
+        queryset=Title.objects.all()
+    )
+    review = serializers.SlugRelatedField(
+        slug_field='slug',
+        many=True,
+        queryset=Review.objects.all()
+    )
+
+    class Meta:
+        model = Comment
+        fields = '__all__'
