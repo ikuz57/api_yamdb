@@ -14,6 +14,7 @@ class CustomAccountManager(BaseUserManager):
             username=username, email=email, password=password)
         user.set_password(password)
         user.is_staff = True
+        user.role = 'admin'
         user.is_superuser = True
         user.save(using=self._db)
         return user
@@ -54,3 +55,6 @@ class CustomUser(AbstractBaseUser, PermissionsMixin):
 
     def __str__(self):
         return self.username
+
+    class Meta:
+        ordering = ['username']
