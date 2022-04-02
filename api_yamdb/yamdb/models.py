@@ -52,19 +52,6 @@ class Title(models.Model):
         verbose_name='Год создания',
         help_text='Введите год создания произведения',
     )
-<<<<<<< HEAD
-
-    rating = models.IntegerField(
-        validators=[
-            MinValueValidator(1),
-            MaxValueValidator(5),
-        ],
-        null=True,
-        blank=True,
-        help_text='Рейтинг'
-    )
-=======
->>>>>>> task/categories-genres-titles
     description = models.CharField(
         max_length=400,
         null=True,
@@ -89,40 +76,13 @@ class Title(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['name', 'year', 'category',],
+                fields=['name', 'year', 'category', ],
                 name='unique_title')
         ]
 
     def __str__(self):
         return self.name
 
-<<<<<<< HEAD
-
-class CategoryTitle(models.Model):
-    category = models.ForeignKey(
-        Category,
-        on_delete=models.CASCADE,
-        null=True
-    )
-    title = models.ForeignKey(
-        Title,
-        on_delete=models.CASCADE,
-        null=True
-    )
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=['category', 'title',],
-                name='unique_categorytitle')
-        ]
-
-    def __str__(self):
-        return f'{self.title} {self.category}' 
-
-
-=======
->>>>>>> task/categories-genres-titles
 class GenreTitle(models.Model):
     genre = models.ForeignKey(
         Genre,
@@ -209,8 +169,6 @@ class Comment(models.Model):
         verbose_name='Произведение',
         help_text='Укажите произведение',
     )
-<<<<<<< HEAD
-=======
     review = models.ForeignKey(
         Review,
         on_delete=models.CASCADE,
@@ -218,7 +176,6 @@ class Comment(models.Model):
         verbose_name='Отзыв',
         help_text='Укажите отзыв',
     )
->>>>>>> task/categories-genres-titles
     pub_date = models.DateTimeField(
         auto_now_add=True,
         verbose_name='Дата отзыва',
