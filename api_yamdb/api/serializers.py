@@ -5,8 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Avg
 from rest_framework.validators import UniqueTogetherValidator
 
-from .models import (Category, Genre, Title, CategoryTitle, GenreTitle,
-                          Review, Comment)
+from yamdb.models import (Category, Genre, Title, Review, Comment)
 
 
 class CategorySerialaizer(serializers.ModelSerializer):
@@ -38,7 +37,6 @@ class TitleSerialaizer(serializers.ModelSerializer):
     )
     rating = serializers.SerializerMethodField()
    # permission_classes = (IsModerator,)
-
     class Meta:
         model = Title
         fields = ('id', 'name', 'year', 'rating', 'description', 'genre', 'category',)
@@ -66,29 +64,29 @@ class TitleSerialaizer(serializers.ModelSerializer):
             return rating.get('rating')
         return 0
 
-    class ReviewSerializer(serializers.ModelSerializer):
-        title = serializers.SlugRelatedField(
-            slug_field='slug',
-            many=True,
-            queryset=Title.objects.all()
-        )
+class ReviewSerializer(serializers.ModelSerializer):
+    title = serializers.SlugRelatedField(
+        slug_field='slug',
+        many=True,
+        queryset=Title.objects.all()
+    )
 
-        class Meta:
-            model = Review
-            fields = '__all__'
+    class Meta:
+        model = Review
+        fields = '__all__'
 
-    class CommentSerializer(serializers.ModelSerializer):
-        title = serializers.SlugRelatedField(
-            slug_field='slug',
-            many=True,
-            queryset=Title.objects.all()
-        )
-        review = serializers.SlugRelatedField(
-            slug_field='slug',
-            many=True,
-            queryset=Review.objects.all()
-        )
+class CommentSerializer(serializers.ModelSerializer):
+    title = serializers.SlugRelatedField(
+        slug_field='slug',
+        many=True,
+        queryset=Title.objects.all()
+    )
+    review = serializers.SlugRelatedField(
+        slug_field='slug',
+        many=True,
+        queryset=Review.objects.all()
+    )
 
-        class Meta:
-            model = Comment
-            fields = '__all__'
+    class Meta:
+        model = Comment
+        fields = '__all__'
