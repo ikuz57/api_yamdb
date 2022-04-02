@@ -1,8 +1,8 @@
-from django.shortcuts import render
 from rest_framework import viewsets
 from rest_framework import mixins
 from rest_framework import filters
 from django_filters.rest_framework import DjangoFilterBackend
+
 from api.serializers import CategorySerialaizer, GenreSerialaizer, TitleSerialaizer
 from yamdb.models import Category, Genre, Title
 

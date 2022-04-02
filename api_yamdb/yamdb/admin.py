@@ -1,6 +1,6 @@
 from django.contrib.admin import ModelAdmin, site
 
-from .models import Category, Comment, Genre, Revew, Title
+from .models import Category, Comment, Genre, Review, Title
 
 
 class CategoryAdmin(ModelAdmin):
@@ -9,8 +9,8 @@ class CategoryAdmin(ModelAdmin):
 
 class CommentAdmin(ModelAdmin):
     list_display = ('id', 'author', 'title', 'review', 'pub_date', 'text')
-    #search_fields = ('text',)
-    #list_filter = ('author', 'pub_date')
+    search_fields = ('text',)
+    list_filter = ('author', 'pub_date')
 
 
 class GenreAdmin(ModelAdmin):
@@ -23,8 +23,8 @@ class ReviewAdmin(ModelAdmin):
     list_filter = ('author', 'pub_date')
 
 
-# class TitleAdmin(ModelAdmin):
-#     list_display = ('id', 'name', 'year', 'category', 'genre', 'description')
+class TitleAdmin(ModelAdmin):
+    list_display = ('id', 'name', 'year', 'description')
     # search_fields = ('description',)
     # list_filter = ('genre', 'year')
 
@@ -32,5 +32,5 @@ class ReviewAdmin(ModelAdmin):
 site.register(Category, CategoryAdmin)
 site.register(Comment, CommentAdmin)
 site.register(Genre, GenreAdmin)
-site.register(Revew, ReviewAdmin)
-# site.register(Title, TitleAdmin)
+site.register(Review, ReviewAdmin)
+site.register(Title, TitleAdmin)

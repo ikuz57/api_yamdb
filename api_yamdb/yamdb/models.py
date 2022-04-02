@@ -5,6 +5,7 @@ from django.contrib.auth import get_user_model
 
 User = get_user_model()
 
+
 class Category(models.Model):
     name = models.CharField(
         max_length=200,
@@ -35,6 +36,7 @@ class Genre(models.Model):
     def __str__(self):
         return self.name
 
+
 class Title(models.Model):
     name = models.CharField(
         max_length=200,
@@ -56,6 +58,8 @@ class Title(models.Model):
             MinValueValidator(1),
             MaxValueValidator(5),
         ],
+        null=True,
+        blank=True,
         help_text='Рейтинг'
     )
     description = models.CharField(
@@ -70,9 +74,11 @@ class Title(models.Model):
         related_name='titles',
         help_text='Жанр'
     )
-    category = models.ManyToManyField(
+    category = models.ForeignKey(
         Category,
-        through='CategoryTitle',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name='titles',
         help_text='Категория'
     )
@@ -86,6 +92,7 @@ class Title(models.Model):
 
     def __str__(self):
         return self.name
+
 
 class CategoryTitle(models.Model):
     category = models.ForeignKey(
@@ -108,6 +115,7 @@ class CategoryTitle(models.Model):
 
     def __str__(self):
         return f'{self.title} {self.category}' 
+
 
 class GenreTitle(models.Model):
     genre = models.ForeignKey(
@@ -132,7 +140,7 @@ class GenreTitle(models.Model):
         return f'{self.title} {self.genre}' 
 
 
-class Revew(models.Model):
+class Review(models.Model):
     title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
@@ -180,7 +188,13 @@ class Comment(models.Model):
         related_name='comments',
         verbose_name='Автор',
         help_text='Укажите автора',
-
+    )
+    review = models.ForeignKey(
+        Review,
+        on_delete=models.CASCADE,
+        related_name='comments',
+        verbose_name='Отзыв',
+        help_text='Укажите отзыв',
     )
     title = models.ForeignKey(
         Title,
@@ -188,13 +202,6 @@ class Comment(models.Model):
         related_name='comments',
         verbose_name='Произведение',
         help_text='Укажите произведение',
-    )
-    review = models.ForeignKey(
-        Revew,
-        on_delete=models.CASCADE,
-        related_name='comments',
-        verbose_name='Отзыв',
-        help_text='Укажите отзыв',
     )
     pub_date = models.DateTimeField(
         auto_now_add=True,
@@ -205,3 +212,7 @@ class Comment(models.Model):
         verbose_name='Текст отзыва',
         help_text='Введите текст отзыва'
     )
+
+    def save(self,  *args, **kwargs):
+        self.title = self.review.title
+        super().save(*args, **kwargs)
