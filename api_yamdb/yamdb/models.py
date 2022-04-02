@@ -62,9 +62,11 @@ class Title(models.Model):
         related_name='titles',
         help_text='Жанр'
     )
-    category = models.ManyToManyField(
+    category = models.ForeignKey(
         Category,
-        through='CategoryTitle',
+        on_delete=models.SET_NULL,
+        null=True,
+        blank=True,
         related_name='titles',
         help_text='Категория'
     )
@@ -72,34 +74,12 @@ class Title(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['name','year',],
+                fields=['name', 'year', 'category',],
                 name='unique_title')
         ]
 
     def __str__(self):
         return self.name
-
-class CategoryTitle(models.Model):
-    category = models.ForeignKey(
-        Category,
-        on_delete=models.CASCADE,
-        null=True
-    )
-    title = models.ForeignKey(
-        Title,
-        on_delete=models.CASCADE,
-        null=True
-    )
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=['category', 'title',],
-                name='unique_categorytitle')
-        ]
-
-    def __str__(self):
-        return f'{self.title} {self.category}' 
 
 class GenreTitle(models.Model):
     genre = models.ForeignKey(
