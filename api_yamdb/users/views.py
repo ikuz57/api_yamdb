@@ -70,4 +70,4 @@ class UserViewSet(viewsets.ModelViewSet):
     queryset = User.objects.all()
     serializer_class = CustomUserSerializer
     lookup_field = 'username'
-    permission_classes = (IsAdmin, )
+    permission_classes = (IsAdmin,)

@@ -1,4 +1,5 @@
 from django_filters import CharFilter, FilterSet
+
 from yamdb.models import Title
 
 
@@ -8,4 +9,4 @@ class TitleFilterSet(FilterSet):
     
     class Meta:
         model = Title
-        fields = ['category','genre','year','name']
+        fields = ['category', 'genre', 'year', 'name']
