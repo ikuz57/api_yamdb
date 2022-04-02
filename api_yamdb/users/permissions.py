@@ -12,6 +12,14 @@ class IsModerator(permissions.BasePermission):
         return user.role == 'moderator'
 
 
+class IsAdmin(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        username = request.user
+        user = User.objects.get(username=username)
+        return user.role == 'admin'
+
+
 class IsAuthorOrReadOnly(permissions.BasePermission):
 
     def has_permission(self, request, view):
