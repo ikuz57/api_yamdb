@@ -38,7 +38,7 @@ class TitleSerialaizer(serializers.ModelSerializer):
     class Meta:
         model = Title
         fields = ('id', 'name', 'year', 'rating', 'description', 'genre', 'category',)
-        read_only_fields = ('genre', 'category', 'category',)
+        read_only_fields = ('genre', 'category',)
 
         validators = [
             UniqueTogetherValidator(
