@@ -5,7 +5,7 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Avg
 from rest_framework.validators import UniqueTogetherValidator
 
-from yamdb.models import (Category, Genre, Title, GenreTitle,
+from yamdb.models import (Category, Genre, Title,
                           Review, Comment)
 
 
@@ -26,13 +26,12 @@ class TitleSerialaizer(serializers.ModelSerializer):
         slug_field='slug',
         many=True,
         queryset=Genre.objects.all(),
-        required=True
+        required=True,
     )
     category = serializers.SlugRelatedField(
         slug_field='slug',
-        many=True,
         queryset=Category.objects.all(),
-        required=True
+        required=True,
     )
     rating = serializers.SerializerMethodField()
 
@@ -60,8 +59,8 @@ class TitleSerialaizer(serializers.ModelSerializer):
                 year=obj.year,
                 category=obj.category)
             rating = title.reviews.aggregate(rating=Avg('score'))
-            return rating.get('rating')
-        return 0
+            return round(rating.get('rating'))
+        return None
 
 
 class ReviewSerializer(serializers.ModelSerializer):

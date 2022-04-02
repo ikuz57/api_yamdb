@@ -1,20 +1,21 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, mixins, filters, permissions
-from users.permissions import IsAdmin, IsModerator
+from rest_framework import viewsets, mixins, filters
+from users.permissions import IsAdmin
 from .serializers import (CategorySerialaizer, GenreSerialaizer,
                           TitleSerialaizer, ReviewSerializer,
                           CommentSerializer)
 
 from yamdb.models import Category, Genre, Title, Review, Comment
 from users.permissions import IsAuthorOrReadOnly
+from .filters import TitleFilterSet
 
 
 class ListCreateDelete(mixins.CreateModelMixin, mixins.DestroyModelMixin,
                        mixins.ListModelMixin, viewsets.GenericViewSet):
 
     def get_permissions(self):
-        if self.action == 'list':
+        if self.action == 'list' or self.action == 'retrieve':
             permission_classes = [IsAuthorOrReadOnly]
         else:
            permission_classes = [IsAdmin]
@@ -40,11 +41,11 @@ class GenresViewSet(ListCreateDelete):
 class TitlesViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
     serializer_class = TitleSerialaizer
+    filter_class = TitleFilterSet
     filter_backends = (DjangoFilterBackend,)
-    filterset_fields = ('category__slug', 'genre__slug', 'name', 'year')
 
     def get_permissions(self):
-        if self.action == 'list':
+        if self.action == 'list' or self.action == 'retrieve':
             permission_classes = [IsAuthorOrReadOnly]
         else:
            permission_classes = [IsAdmin]
