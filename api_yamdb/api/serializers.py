@@ -37,8 +37,7 @@ class TitleSerialaizer(serializers.ModelSerializer):
         required=True
     )
     rating = serializers.SerializerMethodField()
-
-    # permission_classes = (IsModerator,)
+   # permission_classes = (IsModerator,)
 
     class Meta:
         model = Title
