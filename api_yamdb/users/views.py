@@ -7,10 +7,10 @@ from .utils import send_email_with_code
 from .permissions import IsAdmin
 import random
 from rest_framework import viewsets
+# from rest_framework import permissions
 from rest_framework_simplejwt.tokens import RefreshToken
 from django.shortcuts import get_object_or_404
 from rest_framework.permissions import AllowAny
-from django.contrib.admin.views.decorators import staff_member_required
 
 User = get_user_model()
 
@@ -40,7 +40,6 @@ def token_obtain(request):
             return Response('Data not found', status=status.HTTP_404_NOT_FOUND)
         if username == user.username and code == user.confirmation_code:
             access_token = RefreshToken.for_user(user).access_token
-
             data = {
                 'token': str(access_token),
             }
@@ -50,7 +49,6 @@ def token_obtain(request):
 
 
 @api_view(['GET', 'PATCH'])
-# @staff_member_required
 def get_patch_user_data(request):
     if request.method == 'GET':
         user = User.objects.get(username=request.user)
@@ -61,7 +59,10 @@ def get_patch_user_data(request):
         serializer = CustomUserSerializer(
             user, data=request.data, partial=True)
         if serializer.is_valid():
-            serializer.save()
+            if user.role != 'admin':
+                serializer.save(role=user.role)
+            else:
+                serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
@@ -71,3 +72,4 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = CustomUserSerializer
     lookup_field = 'username'
     permission_classes = (IsAdmin, )
+    # permission_classes = (permissions.IsAdminUser, )
