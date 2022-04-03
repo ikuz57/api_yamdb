@@ -3,7 +3,12 @@ from .models import CustomUser
 
 
 class CustomUserAdmin(admin.ModelAdmin):
-    list_display = ('pk', 'username', 'email')
+    list_display = ('username', 'role', 'email')
+    fieldsets = (
+        ('User info', {'fields': ('username',
+         'email', 'first_name', 'last_name', 'bio')}),
+        ('Permissions', {'fields': ('is_staff', 'role')}),
+    )
 
 
 admin.site.register(CustomUser, CustomUserAdmin)

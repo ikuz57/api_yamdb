@@ -10,7 +10,7 @@ class CustomAccountManager(BaseUserManager):
         user.save(using=self._db)
         return user
 
-    def create_superuser(self, username, email, password, role, bio):
+    def create_superuser(self, username, email, password, role='user', bio=''):
         user = self.model(username=username, email=email,
                           password=password, role=role, bio=bio)
         user.set_password(password)
