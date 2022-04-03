@@ -145,7 +145,6 @@ class Review(models.Model):
     )
 
     class Meta:
-        ordering = ('id',)
         db_table = 'review'
         constraints = [
             models.UniqueConstraint(
