@@ -56,7 +56,8 @@ class TitlesViewSet(viewsets.ModelViewSet):
         return [permission() for permission in permission_classes]
 
 
-class ReviewViewset(viewsets.ModelViewSet):
+class ReviewViewset(mixins.CreateModelMixin, mixins.DestroyModelMixin,
+                    mixins.ListModelMixin, viewsets.GenericViewSet):
     serializer_class = ReviewSerializer
     filter_backends = (DjangoFilterBackend,)
     permission_classes = (IsAuthorCreateAuthOrReadOnly,)
@@ -72,7 +73,8 @@ class ReviewViewset(viewsets.ModelViewSet):
         return new_queryset
 
 
-class CommentViewset(viewsets.ModelViewSet):
+class CommentViewset(mixins.CreateModelMixin, mixins.DestroyModelMixin,
+                     mixins.ListModelMixin, viewsets.GenericViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     filter_backends = (DjangoFilterBackend,)
@@ -84,5 +86,6 @@ class CommentViewset(viewsets.ModelViewSet):
         return new_queryset
 
     def perform_create(self, serializer):
-        return serializer.save(author=self.request.user)
-
+        review_id = self.kwargs.get('review_id')
+        review = get_object_or_404(Review, pk=review_id)
+        return serializer.save(author=self.request.user, review=review)

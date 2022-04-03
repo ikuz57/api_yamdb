@@ -1,9 +1,10 @@
 from audioop import avg
 from email.policy import default
-from rest_framework import serializers
+from rest_framework import serializers, status
 from django.shortcuts import get_object_or_404
 from django.db.models import Avg
 from django.contrib.auth import get_user_model
+from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueTogetherValidator
 
 from yamdb.models import (Category, Genre, Title,
@@ -60,7 +61,10 @@ class TitleSerialaizer(serializers.ModelSerializer):
 
     class Meta:
         model = Title
-        fields = ('id', 'name', 'year', 'rating', 'description', 'genre', 'category',)
+        fields = (
+            'id', 'name', 'year', 'rating', 'description', 'genre',
+            'category',
+        )
 
     def get_rating(self, obj):
         if Review.objects.filter(
@@ -93,7 +97,7 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Review
-        #read_only_fields = ('title', 'author',)
+        # read_only_fields = ('title', 'author',)
         validators = [
             UniqueTogetherValidator(
                 queryset=Review.objects.all(),
@@ -103,18 +107,38 @@ class ReviewSerializer(serializers.ModelSerializer):
             )
         ]
 
+    def validate(self, data):
+        if self.context['request'].method == 'POST':
+            title_id = (self.context['request'].parser_context['kwargs']
+                        ['title_id'])
+            author = self.context['request'].user
+            review = Review.objects.filter(title_id=title_id, author=author)
+            if review.exists():
+                raise ValidationError(
+                    detail=('К одному произведению можно оставить только ' +
+                            'один отзыв.'),
+                    code=status.HTTP_400_BAD_REQUEST,
+                )
+        return data
+
 
 class CommentSerializer(serializers.ModelSerializer):
     title = serializers.SlugRelatedField(
         slug_field='id',
-        queryset=Title.objects.all()
+        queryset=Title.objects.all(),
+        default=None
     )
     review = serializers.SlugRelatedField(
         slug_field='id',
-        queryset=Review.objects.all()
+        queryset=Review.objects.all(),
+        default=None
+    )
+    author = serializers.SlugRelatedField(
+        slug_field='username',
+        queryset=User.objects.all(),
+        default=serializers.CurrentUserDefault(),
     )
 
     class Meta:
         model = Comment
         fields = '__all__'
-
