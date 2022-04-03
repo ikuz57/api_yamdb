@@ -89,7 +89,7 @@ class GenreTitle(models.Model):
         Genre,
         on_delete=models.CASCADE,
         null=True
-          )
+    )
     title = models.ForeignKey(
         Title,
         on_delete=models.CASCADE,
@@ -104,7 +104,7 @@ class GenreTitle(models.Model):
         ]
 
     def __str__(self):
-        return f'{self.title} {self.genre}' 
+        return f'{self.title} {self.genre}'
 
 
 class Review(models.Model):
@@ -145,8 +145,12 @@ class Review(models.Model):
     )
 
     class Meta:
-        models.UniqueConstraint(fields=['author', 'title'],
-                                name='unique_review')
+        constraints = [
+            models.UniqueConstraint(
+                fields=('author', 'title'),
+                name='unique_review',
+            )
+        ]
 
     def __str__(self):
         return f'{self.title} - {self.author}'
@@ -191,6 +195,6 @@ class Comment(models.Model):
         help_text='Введите текст отзыва'
     )
 
-    def save(self,  *args, **kwargs):
+    def save(self, *args, **kwargs):
         self.title = self.review.title
         super().save(*args, **kwargs)

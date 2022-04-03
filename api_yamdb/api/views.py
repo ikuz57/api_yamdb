@@ -2,7 +2,8 @@ from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import viewsets, mixins, filters
 
-from users.permissions import IsAuthorOrReadOnly, IsAdmin
+from users.permissions import (IsAuthorOrReadOnly, IsAdmin,
+                               IsAuthorCreateAuthOrReadOnly)
 from .serializers import (CategorySerialaizer, GenreSerialaizer,
                           TitleSerialaizer, ReviewSerializer,
                           CommentSerializer, TitleCreateSerialaizer)
@@ -58,6 +59,7 @@ class TitlesViewSet(viewsets.ModelViewSet):
 class ReviewViewset(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     filter_backends = (DjangoFilterBackend,)
+    permission_classes = (IsAuthorCreateAuthOrReadOnly,)
 
     def get_queryset(self):
         title_id = self.kwargs.get('title_id')
@@ -66,14 +68,15 @@ class ReviewViewset(viewsets.ModelViewSet):
 
     def perform_create(self, serializer):
         title_id = self.kwargs.get('title_id')
-        return serializer.save(author=self.request.user, title=title_id)
+        title = get_object_or_404(Title, pk=title_id)
+        serializer.save(author=self.request.user, title=title)
 
-    def get_permissions(self):
-        if self.action == 'list' or self.action == 'retrieve':
-            permission_classes = [IsAuthorOrReadOnly]
-        else:
-            permission_classes = [IsAdmin]
-        return [permission() for permission in permission_classes]
+    #def get_permissions(self):
+    #    if self.action == 'list' or self.action == 'retrieve':
+    #        permission_classes = [IsAuthorOrReadOnly]
+    #    else:
+    #        permission_classes = [IsAdmin]
+    #    return [permission() for permission in permission_classes]
 
 
 class CommentViewset(viewsets.ModelViewSet):

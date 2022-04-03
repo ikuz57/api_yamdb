@@ -26,7 +26,6 @@ class IsAdmin(permissions.BasePermission):
 
 
 class IsAuthorOrReadOnly(permissions.BasePermission):
-
     def has_permission(self, request, view):
         return (request.method in permissions.SAFE_METHODS
                 or request.user.is_authenticated)
@@ -34,6 +33,14 @@ class IsAuthorOrReadOnly(permissions.BasePermission):
     def has_object_permission(self, request, view, obj):
         return (request.method in permissions.SAFE_METHODS
                 or obj.author == request.user)
+
+
+class IsAuthorCreateAuthOrReadOnly(IsAuthorOrReadOnly):
+    def has_object_permission(self, request, view, obj):
+        if request.action == 'create':
+            return permissions.IsAuthenticated
+        else:
+            return super(IsAuthorCreateAuthOrReadOnly, self).has_object_permission()
 
 
 class IsSuperuser(permissions.BasePermission):

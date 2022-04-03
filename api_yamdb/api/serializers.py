@@ -3,10 +3,13 @@ from email.policy import default
 from rest_framework import serializers
 from django.shortcuts import get_object_or_404
 from django.db.models import Avg
+from django.contrib.auth import get_user_model
 from rest_framework.validators import UniqueTogetherValidator
 
 from yamdb.models import (Category, Genre, Title,
                           Review, Comment)
+
+User = get_user_model()
 
 
 class CategorySerialaizer(serializers.ModelSerializer):
@@ -78,12 +81,27 @@ class TitleSerialaizer(serializers.ModelSerializer):
 class ReviewSerializer(serializers.ModelSerializer):
     title = serializers.SlugRelatedField(
         slug_field='id',
-        queryset=Title.objects.all()
+        queryset=Title.objects.all(),
+        default='',
+    )
+    author = serializers.SlugRelatedField(
+        slug_field='username',
+        queryset=User.objects.all(),
+        default=serializers.CurrentUserDefault(),
     )
 
     class Meta:
         model = Review
         fields = '__all__'
+        read_only_fields = ('title', 'author',)
+        validators = [
+            UniqueTogetherValidator(
+                queryset=Review.objects.all(),
+                fields=('author', 'title'),
+                #message=('На одно произведение можно написать',
+                #         'только один отзыв.'),
+            )
+        ]
 
 
 class CommentSerializer(serializers.ModelSerializer):
