@@ -7,7 +7,7 @@ from users.permissions import (IsAuthorOrReadOnly, IsAdmin,
 from .serializers import (CategorySerialaizer, GenreSerialaizer,
                           TitleSerialaizer, ReviewSerializer,
                           CommentSerializer, TitleCreateSerialaizer)
-from yamdb.models import Category, Genre, Title, Review, Comment
+from reviews.models import Category, Genre, Title, Review, Comment
 from .filters import TitleFilterSet
 
 

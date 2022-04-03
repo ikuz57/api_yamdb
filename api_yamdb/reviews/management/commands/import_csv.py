@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand
 import csv
 from pathlib import Path
 
-from yamdb import models
+from reviews import models
 
 root = Path(__file__).parent.parent.parent.parent
 static_data_dir = Path(root, 'static', 'data')

@@ -27,7 +27,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'django_filters',
     'api.apps.ApiConfig',
-    'yamdb.apps.YamdbConfig',
+    'reviews.apps.ReviewsConfig',
 ]
 
 MIDDLEWARE = [

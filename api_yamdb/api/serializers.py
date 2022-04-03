@@ -1,5 +1,3 @@
-from audioop import avg
-from email.policy import default
 from rest_framework import serializers, status
 from django.shortcuts import get_object_or_404
 from django.db.models import Avg
@@ -7,7 +5,7 @@ from django.contrib.auth import get_user_model
 from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueTogetherValidator
 
-from yamdb.models import (Category, Genre, Title,
+from reviews.models import (Category, Genre, Title,
                           Review, Comment)
 
 User = get_user_model()
