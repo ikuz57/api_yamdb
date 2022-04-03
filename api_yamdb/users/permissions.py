@@ -37,10 +37,11 @@ class IsAuthorOrReadOnly(permissions.BasePermission):
 
 class IsAuthorCreateAuthOrReadOnly(IsAuthorOrReadOnly):
     def has_object_permission(self, request, view, obj):
-        if request.action == 'create':
+        if request.method == 'POST':
             return permissions.IsAuthenticated
         else:
-            return super(IsAuthorCreateAuthOrReadOnly, self).has_object_permission()
+            return (super(IsAuthorCreateAuthOrReadOnly, self).
+                    has_object_permission(request, view, obj))
 
 
 class IsSuperuser(permissions.BasePermission):

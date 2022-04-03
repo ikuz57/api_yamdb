@@ -91,15 +91,15 @@ class ReviewSerializer(serializers.ModelSerializer):
     )
 
     class Meta:
-        model = Review
         fields = '__all__'
-        read_only_fields = ('title', 'author',)
+        model = Review
+        #read_only_fields = ('title', 'author',)
         validators = [
             UniqueTogetherValidator(
                 queryset=Review.objects.all(),
                 fields=('author', 'title'),
-                #message=('На одно произведение можно написать',
-                #         'только один отзыв.'),
+                message=('На одно произведение можно написать',
+                         'только один отзыв.'),
             )
         ]
 

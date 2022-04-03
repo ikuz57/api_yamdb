@@ -108,19 +108,19 @@ class GenreTitle(models.Model):
 
 
 class Review(models.Model):
-    title = models.ForeignKey(
-        Title,
-        on_delete=models.CASCADE,
-        related_name='reviews',
-        verbose_name='review',
-        help_text='Выберите произведение',
-    )
     author = models.ForeignKey(
         User,
         on_delete=models.CASCADE,
         related_name='reviews',
         verbose_name='Автор',
         help_text='Укажите автора',
+    )
+    title = models.ForeignKey(
+        Title,
+        on_delete=models.CASCADE,
+        related_name='reviews',
+        verbose_name='review',
+        help_text='Выберите произведение',
     )
     text = models.TextField(
         verbose_name='Текст отзыва',
@@ -148,7 +148,7 @@ class Review(models.Model):
         constraints = [
             models.UniqueConstraint(
                 fields=('author', 'title'),
-                name='unique_review',
+                name='unique_review'
             )
         ]
 
@@ -177,13 +177,6 @@ class Comment(models.Model):
         related_name='comments',
         verbose_name='Произведение',
         help_text='Укажите произведение',
-    )
-    review = models.ForeignKey(
-        Review,
-        on_delete=models.CASCADE,
-        related_name='comments',
-        verbose_name='Отзыв',
-        help_text='Укажите отзыв',
     )
     pub_date = models.DateTimeField(
         auto_now_add=True,

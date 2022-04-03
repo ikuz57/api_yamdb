@@ -61,28 +61,22 @@ class ReviewViewset(viewsets.ModelViewSet):
     filter_backends = (DjangoFilterBackend,)
     permission_classes = (IsAuthorCreateAuthOrReadOnly,)
 
-    def get_queryset(self):
-        title_id = self.kwargs.get('title_id')
-        new_queryset = get_object_or_404(Title, pk=title_id).reviews.all()
-        return new_queryset
-
     def perform_create(self, serializer):
         title_id = self.kwargs.get('title_id')
         title = get_object_or_404(Title, pk=title_id)
         serializer.save(author=self.request.user, title=title)
 
-    #def get_permissions(self):
-    #    if self.action == 'list' or self.action == 'retrieve':
-    #        permission_classes = [IsAuthorOrReadOnly]
-    #    else:
-    #        permission_classes = [IsAdmin]
-    #    return [permission() for permission in permission_classes]
+    def get_queryset(self, *args, **kwargs):
+        title_id = self.kwargs.get('title_id')
+        new_queryset = get_object_or_404(Title, pk=title_id).reviews.all()
+        return new_queryset
 
 
 class CommentViewset(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     filter_backends = (DjangoFilterBackend,)
+    permission_classes = (IsAuthorCreateAuthOrReadOnly,)
 
     def get_queryset(self):
         review_id = self.kwargs.get('review_id')
@@ -90,11 +84,5 @@ class CommentViewset(viewsets.ModelViewSet):
         return new_queryset
 
     def perform_create(self, serializer):
-        serializer.save(author=self.request.user)
+        return serializer.save(author=self.request.user)
 
-    def get_permissions(self):
-        if self.action == 'list' or self.action == 'retrieve':
-            permission_classes = [IsAuthorOrReadOnly]
-        else:
-            permission_classes = [IsAdmin]
-        return [permission() for permission in permission_classes]
