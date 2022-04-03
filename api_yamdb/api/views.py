@@ -5,7 +5,7 @@ from rest_framework import viewsets, mixins, filters
 from users.permissions import IsAuthorOrReadOnly, IsAdmin
 from .serializers import (CategorySerialaizer, GenreSerialaizer,
                           TitleSerialaizer, ReviewSerializer,
-                          CommentSerializer)
+                          CommentSerializer, TitleCreateSerialaizer)
 from yamdb.models import Category, Genre, Title, Review, Comment
 from .filters import TitleFilterSet
 
@@ -39,9 +39,13 @@ class GenresViewSet(ListCreateDelete):
 
 class TitlesViewSet(viewsets.ModelViewSet):
     queryset = Title.objects.all()
-    serializer_class = TitleSerialaizer
     filter_class = TitleFilterSet
     filter_backends = (DjangoFilterBackend,)
+
+    def get_serializer_class(self):
+        if self.request.method in ('POST', 'PATCH',):
+            return TitleCreateSerialaizer
+        return TitleSerialaizer
 
     def get_permissions(self):
         if self.action == 'list' or self.action == 'retrieve':

@@ -1,4 +1,4 @@
-from django_filters import CharFilter, FilterSet
+from django_filters import CharFilter, FilterSet, NumberFilter
 
 from yamdb.models import Title
 
@@ -6,6 +6,8 @@ from yamdb.models import Title
 class TitleFilterSet(FilterSet):
     category = CharFilter(field_name='category__slug')
     genre = CharFilter(field_name='genre__slug')
+    name = CharFilter(field_name='name', lookup_expr='contains')
+    year = NumberFilter(field_name='year')
     
     class Meta:
         model = Title
