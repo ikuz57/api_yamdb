@@ -83,6 +83,7 @@ class Title(models.Model):
     def __str__(self):
         return self.name
 
+
 class GenreTitle(models.Model):
     genre = models.ForeignKey(
         Genre,
@@ -98,7 +99,7 @@ class GenreTitle(models.Model):
     class Meta:
         constraints = [
             models.UniqueConstraint(
-                fields=['genre', 'title',],
+                fields=['genre', 'title', ],
                 name='unique_genretitle')
         ]
 
@@ -124,6 +125,8 @@ class Review(models.Model):
     text = models.TextField(
         verbose_name='Текст отзыва',
         help_text='Введите текст отзыва',
+        blank=False,
+        null=False,
     )
     score = models.IntegerField(
         validators=[
@@ -132,6 +135,8 @@ class Review(models.Model):
         ],
         verbose_name='Оценка',
         help_text='Укажите вашу оценку произведения',
+        blank=False,
+        null=False,
     )
     pub_date = models.DateTimeField(
         auto_now_add=True,

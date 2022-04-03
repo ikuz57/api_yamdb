@@ -1,23 +1,21 @@
 from audioop import avg
 from email.policy import default
-from rest_framework import serializers, permissions
+from rest_framework import serializers
 from django.shortcuts import get_object_or_404
 from django.db.models import Avg
 from rest_framework.validators import UniqueTogetherValidator
 
-from yamdb.models import (Category, Genre, Title, GenreTitle,
+from yamdb.models import (Category, Genre, Title,
                           Review, Comment)
 
 
 class CategorySerialaizer(serializers.ModelSerializer):
-    # permission_classes = (IsModerator,)
     class Meta:
         model = Category
         fields = ('name', 'slug',)
 
 
 class GenreSerialaizer(serializers.ModelSerializer):
-    # permission_classes = (IsModerator,)
     class Meta:
         model = Genre
         fields = ('name', 'slug',)
@@ -28,21 +26,19 @@ class TitleSerialaizer(serializers.ModelSerializer):
         slug_field='slug',
         many=True,
         queryset=Genre.objects.all(),
-        required=True
+        required=True,
     )
     category = serializers.SlugRelatedField(
         slug_field='slug',
-        many=True,
         queryset=Category.objects.all(),
-        required=True
+        required=True,
     )
     rating = serializers.SerializerMethodField()
-   # permission_classes = (IsModerator,)
 
     class Meta:
         model = Title
         fields = ('id', 'name', 'year', 'rating', 'description', 'genre', 'category',)
-        read_only_fields = ('genre', 'category', 'category',)
+        read_only_fields = ('genre', 'category',)
 
         validators = [
             UniqueTogetherValidator(
@@ -63,13 +59,13 @@ class TitleSerialaizer(serializers.ModelSerializer):
                 year=obj.year,
                 category=obj.category)
             rating = title.reviews.aggregate(rating=Avg('score'))
-            return rating.get('rating')
-        return 0
+            return round(rating.get('rating'))
+        return None
 
 
 class ReviewSerializer(serializers.ModelSerializer):
     title = serializers.SlugRelatedField(
-        slug_field='slug',
+        slug_field='id',
         queryset=Title.objects.all()
     )
 
@@ -80,14 +76,15 @@ class ReviewSerializer(serializers.ModelSerializer):
 
 class CommentSerializer(serializers.ModelSerializer):
     title = serializers.SlugRelatedField(
-        slug_field='slug',
+        slug_field='id',
         queryset=Title.objects.all()
     )
     review = serializers.SlugRelatedField(
-        slug_field='slug',
+        slug_field='id',
         queryset=Review.objects.all()
     )
 
     class Meta:
         model = Comment
         fields = '__all__'
+
