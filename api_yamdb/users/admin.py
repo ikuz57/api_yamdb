@@ -8,6 +8,7 @@ class CustomUserAdmin(admin.ModelAdmin):
         ('User info', {'fields': ('username',
          'email', 'first_name', 'last_name', 'bio')}),
         ('Permissions', {'fields': ('is_staff', 'role')}),
+        ('Email verification', {'fields': ('confirmation_code',)}),
     )
 
 

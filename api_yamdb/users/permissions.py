@@ -1,4 +1,5 @@
 from rest_framework import permissions
+from rest_framework.exceptions import AuthenticationFailed
 from django.contrib.auth import get_user_model
 
 User = get_user_model()
@@ -7,6 +8,8 @@ User = get_user_model()
 class IsModerator(permissions.BasePermission):
 
     def has_permission(self, request, view):
+        if request.user.is_anonymous:
+            raise AuthenticationFailed()
         username = request.user
         user = User.objects.get(username=username)
         return user.role == 'moderator'
@@ -15,6 +18,8 @@ class IsModerator(permissions.BasePermission):
 class IsAdmin(permissions.BasePermission):
 
     def has_permission(self, request, view):
+        if request.user.is_anonymous:
+            raise AuthenticationFailed()
         username = request.user
         user = User.objects.get(username=username)
         return user.role == 'admin'

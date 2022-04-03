@@ -5,12 +5,11 @@ from rest_framework import status
 from .serializers import CustomUserSerializer, CustomUserSerializerShort
 from .utils import send_email_with_code
 from .permissions import IsAdmin
+from rest_framework.permissions import AllowAny
 import random
 from rest_framework import viewsets
-# from rest_framework import permissions
 from rest_framework_simplejwt.tokens import RefreshToken
-from django.shortcuts import get_object_or_404
-from rest_framework.permissions import AllowAny
+
 
 User = get_user_model()
 
@@ -35,13 +34,13 @@ def token_obtain(request):
         username = request.data['username']
         code = request.data['confirmation_code']
         try:
-            user = get_object_or_404(User, username=username)
+            user = User.objects.get(username=username)
         except:
             return Response('Data not found', status=status.HTTP_404_NOT_FOUND)
         if username == user.username and code == user.confirmation_code:
-            access_token = RefreshToken.for_user(user).access_token
+            refresh_token = RefreshToken.for_user(user)
             data = {
-                'token': str(access_token),
+                'token': str(refresh_token.access_token),
             }
         return Response(data)
     except:
@@ -72,4 +71,3 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = CustomUserSerializer
     lookup_field = 'username'
     permission_classes = (IsAdmin, )
-    # permission_classes = (permissions.IsAdminUser, )
