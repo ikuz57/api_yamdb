@@ -46,6 +46,7 @@ class Title(models.Model):
 
     year = models.IntegerField(
         validators=[
+            MinValueValidator(0),
             MaxValueValidator(datetime.date.today().year),
         ],
         verbose_name='Год создания',
