@@ -1,14 +1,14 @@
 from django.shortcuts import get_object_or_404
 from django_filters.rest_framework import DjangoFilterBackend
-from rest_framework import viewsets, mixins, filters
+from rest_framework import filters, mixins, viewsets
 
-from users.permissions import (IsAuthorOrReadOnly, IsAdmin,
-                               IsAuthorCreateAuthOrReadOnly)
-from .serializers import (CategorySerialaizer, GenreSerialaizer,
-                          TitleSerialaizer, ReviewSerializer,
-                          CommentSerializer, TitleCreateSerialaizer)
-from reviews.models import Category, Genre, Title, Review, Comment
+from reviews.models import Category, Comment, Genre, Review, Title
+from users.permissions import (IsAdmin, IsAuthorCreateAuthOrReadOnly,
+                               IsAuthorOrReadOnly)
 from .filters import TitleFilterSet
+from .serializers import (CategorySerialaizer, CommentSerializer,
+                          GenreSerialaizer, ReviewSerializer,
+                          TitleCreateSerialaizer, TitleSerialaizer)
 
 
 class ListCreateDelete(mixins.CreateModelMixin, mixins.DestroyModelMixin,
@@ -28,7 +28,6 @@ class CategoriesViewSet(ListCreateDelete):
     filter_backends = (filters.SearchFilter,)
     search_fields = ('=name',)
     lookup_field = 'slug'
-
 
 
 class GenresViewSet(ListCreateDelete):
@@ -57,8 +56,7 @@ class TitlesViewSet(viewsets.ModelViewSet):
         return [permission() for permission in permission_classes]
 
 
-class ReviewViewset(mixins.CreateModelMixin, mixins.DestroyModelMixin,
-                    mixins.ListModelMixin, viewsets.GenericViewSet):
+class ReviewViewset(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     filter_backends = (DjangoFilterBackend,)
     permission_classes = (IsAuthorCreateAuthOrReadOnly,)
@@ -75,8 +73,7 @@ class ReviewViewset(mixins.CreateModelMixin, mixins.DestroyModelMixin,
         return new_queryset
 
 
-class CommentViewset(mixins.CreateModelMixin, mixins.DestroyModelMixin,
-                     mixins.ListModelMixin, viewsets.GenericViewSet):
+class CommentViewset(viewsets.ModelViewSet):
     queryset = Comment.objects.order_by('id')
     serializer_class = CommentSerializer
     filter_backends = (DjangoFilterBackend,)

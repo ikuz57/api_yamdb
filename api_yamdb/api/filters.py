@@ -8,7 +8,7 @@ class TitleFilterSet(FilterSet):
     genre = CharFilter(field_name='genre__slug')
     name = CharFilter(field_name='name', lookup_expr='contains')
     year = NumberFilter(field_name='year')
-    
+
     class Meta:
         model = Title
         fields = ['category', 'genre', 'year', 'name']

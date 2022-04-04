@@ -1,15 +1,15 @@
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.response import Response
-from django.contrib.auth import get_user_model
-from rest_framework import status
-from .serializers import CustomUserSerializer, CustomUserSerializerShort
-from .utils import send_email_with_code
-from .permissions import IsAdmin
-from rest_framework.permissions import AllowAny
 import random
-from rest_framework import viewsets
+
+from django.contrib.auth import get_user_model
+from rest_framework import status, viewsets
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import AllowAny
+from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
+from .permissions import IsAdmin
+from .serializers import CustomUserSerializer, CustomUserSerializerShort
+from .utils import send_email_with_code
 
 User = get_user_model()
 
@@ -35,7 +35,7 @@ def token_obtain(request):
         code = request.data['confirmation_code']
         try:
             user = User.objects.get(username=username)
-        except:
+        except Exception:
             return Response('Data not found', status=status.HTTP_404_NOT_FOUND)
         if username == user.username and code == user.confirmation_code:
             refresh_token = RefreshToken.for_user(user)
@@ -43,7 +43,7 @@ def token_obtain(request):
                 'token': str(refresh_token.access_token),
             }
         return Response(data)
-    except:
+    except Exception:
         return Response('Data is invalid', status=status.HTTP_400_BAD_REQUEST)
 
 

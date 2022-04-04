@@ -1,12 +1,11 @@
-from rest_framework import serializers, status
-from django.shortcuts import get_object_or_404
-from django.db.models import Avg
 from django.contrib.auth import get_user_model
+from django.db.models import Avg
+from django.shortcuts import get_object_or_404
+from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueTogetherValidator
 
-from reviews.models import (Category, Genre, Title,
-                          Review, Comment)
+from reviews.models import Category, Comment, Genre, Review, Title
 
 User = get_user_model()
 
@@ -95,7 +94,6 @@ class ReviewSerializer(serializers.ModelSerializer):
     class Meta:
         fields = '__all__'
         model = Review
-        # read_only_fields = ('title', 'author',)
         validators = [
             UniqueTogetherValidator(
                 queryset=Review.objects.all(),
@@ -113,8 +111,8 @@ class ReviewSerializer(serializers.ModelSerializer):
             review = Review.objects.filter(title_id=title_id, author=author)
             if review.exists():
                 raise ValidationError(
-                    detail=('К одному произведению можно оставить только ' +
-                            'один отзыв.'),
+                    detail=('К одному произведению можно оставить только '
+                            + 'один отзыв.'),
                     code=status.HTTP_400_BAD_REQUEST,
                 )
         return data

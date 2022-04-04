@@ -1,6 +1,6 @@
-from django.core.management.base import BaseCommand
 import csv
 from pathlib import Path
+from django.core.management.base import BaseCommand
 
 from reviews import models
 
