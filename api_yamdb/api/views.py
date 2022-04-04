@@ -4,8 +4,9 @@ from rest_framework import filters, mixins, viewsets
 
 from reviews.models import Category, Comment, Genre, Review, Title
 from users.permissions import (IsAdmin,
-                               IsAuthorOrModerOrAdminCreateAuthOrReadOnly,
-                               IsAuthorOrReadOnly)
+                               IsAuthorOrReadOnly,
+                               IsModerator,
+                               IsSuperuser)
 from .filters import TitleFilterSet
 from .serializers import (CategorySerialaizer, CommentSerializer,
                           GenreSerialaizer, ReviewSerializer,
@@ -60,7 +61,8 @@ class TitlesViewSet(viewsets.ModelViewSet):
 class ReviewViewset(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     filter_backends = (DjangoFilterBackend,)
-    permission_classes = (IsAuthorOrModerOrAdminCreateAuthOrReadOnly,)
+    permission_classes = (IsAuthorOrReadOnly
+                          | IsModerator | IsAdmin | IsSuperuser,)
 
     def perform_create(self, serializer):
         title_id = self.kwargs.get('title_id')
@@ -78,7 +80,8 @@ class CommentViewset(viewsets.ModelViewSet):
     queryset = Comment.objects.order_by('id')
     serializer_class = CommentSerializer
     filter_backends = (DjangoFilterBackend,)
-    permission_classes = (IsAuthorOrModerOrAdminCreateAuthOrReadOnly,)
+    permission_classes = (IsAuthorOrReadOnly
+                          | IsModerator | IsAdmin | IsSuperuser,)
 
     def get_queryset(self):
         review_id = self.kwargs.get('review_id')
