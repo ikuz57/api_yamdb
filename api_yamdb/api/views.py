@@ -3,7 +3,8 @@ from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, viewsets
 
 from reviews.models import Category, Comment, Genre, Review, Title
-from users.permissions import (IsAdmin, IsAuthorCreateAuthOrReadOnly,
+from users.permissions import (IsAdmin,
+                               IsAuthorOrModerOrAdminCreateAuthOrReadOnly,
                                IsAuthorOrReadOnly)
 from .filters import TitleFilterSet
 from .serializers import (CategorySerialaizer, CommentSerializer,
@@ -59,7 +60,7 @@ class TitlesViewSet(viewsets.ModelViewSet):
 class ReviewViewset(viewsets.ModelViewSet):
     serializer_class = ReviewSerializer
     filter_backends = (DjangoFilterBackend,)
-    permission_classes = (IsAuthorCreateAuthOrReadOnly,)
+    permission_classes = (IsAuthorOrModerOrAdminCreateAuthOrReadOnly,)
 
     def perform_create(self, serializer):
         title_id = self.kwargs.get('title_id')
@@ -77,7 +78,7 @@ class CommentViewset(viewsets.ModelViewSet):
     queryset = Comment.objects.order_by('id')
     serializer_class = CommentSerializer
     filter_backends = (DjangoFilterBackend,)
-    permission_classes = (IsAuthorCreateAuthOrReadOnly,)
+    permission_classes = (IsAuthorOrModerOrAdminCreateAuthOrReadOnly,)
 
     def get_queryset(self):
         review_id = self.kwargs.get('review_id')

@@ -41,6 +41,16 @@ class IsAdmin(permissions.BasePermission):
 class IsAuthorOrReadOnly(permissions.BasePermission):
     def has_permission(self, request, view):
         return (request.method in permissions.SAFE_METHODS
+                or request.user.is_authenticated)
+
+    def has_object_permission(self, request, view, obj):
+        return (request.method in permissions.SAFE_METHODS
+                or obj.author == request.user)
+
+
+class IsAuthorOrModerOrAdminCreateAuthOrReadOnly(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return (request.method in permissions.SAFE_METHODS
                 or request.user.is_authenticated
                 or IsModerator.has_permission(self, request, view)
                 or IsAdmin.has_permission(self, request, view)
@@ -48,21 +58,17 @@ class IsAuthorOrReadOnly(permissions.BasePermission):
                 )
 
     def has_object_permission(self, request, view, obj):
-        return (request.method in permissions.SAFE_METHODS
-                or obj.author == request.user
-                or IsModerator.has_object_permission(self, request, view, obj)
-                or IsAdmin.has_object_permission(self, request, view, obj)
-                or IsSuperuser.has_object_permission(self, request, view, obj)
-                )
-
-
-class IsAuthorCreateAuthOrReadOnly(IsAuthorOrReadOnly):
-    def has_object_permission(self, request, view, obj):
         if request.method == 'POST':
             return permissions.IsAuthenticated
         else:
-            return (super(IsAuthorCreateAuthOrReadOnly, self).
-                    has_object_permission(request, view, obj))
+            return (request.method in permissions.SAFE_METHODS
+                    or obj.author == request.user
+                    or IsModerator.has_object_permission(self, request, view,
+                                                         obj)
+                    or IsAdmin.has_object_permission(self, request, view, obj)
+                    or IsSuperuser.has_object_permission(self, request, view,
+                                                         obj)
+                    )
 
 
 class IsSuperuser(permissions.BasePermission):
