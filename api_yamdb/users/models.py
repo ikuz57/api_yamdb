@@ -2,6 +2,16 @@ from django.contrib.auth.models import (AbstractBaseUser, BaseUserManager,
                                         PermissionsMixin)
 from django.db import models
 
+USER = 'user'
+MODERATOR = 'moderator'
+ADMIN = 'admin'
+
+CHOICES = (
+    (USER, 'user'),
+    (MODERATOR, 'moderator'),
+    (ADMIN, 'admin')
+)
+
 
 class CustomAccountManager(BaseUserManager):
     def create_user(self, username, email, password, role, bio):
@@ -26,11 +36,6 @@ class CustomAccountManager(BaseUserManager):
 
 
 class CustomUser(AbstractBaseUser, PermissionsMixin):
-    CHOICES = (
-        ('user', 'user'),
-        ('moderator', 'moderator'),
-        ('admin', 'admin')
-    )
     username = models.CharField(max_length=150, unique=True)
     email = models.EmailField(
         max_length=254, null=False, blank=False, unique=True)
