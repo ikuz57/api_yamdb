@@ -4,7 +4,7 @@ from django.contrib.auth import get_user_model
 from django.shortcuts import get_object_or_404
 from rest_framework import status, viewsets
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import AllowAny
+from rest_framework import permissions
 from rest_framework.response import Response
 from rest_framework_simplejwt.tokens import RefreshToken
 
@@ -17,7 +17,7 @@ User = get_user_model()
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([permissions.AllowAny])
 def signup(request):
     confirmation_code = str(random.randint(10000, 20000))
     serializer = CustomUserSerializerShort(data=request.data)
@@ -30,7 +30,7 @@ def signup(request):
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
+@permission_classes([permissions.AllowAny])
 def token_obtain(request):
     username = request.data.get('username')
     code = request.data.get('confirmation_code')
@@ -48,13 +48,25 @@ def token_obtain(request):
                     status=status.HTTP_400_BAD_REQUEST)
 
 
-@api_view(['GET', 'PATCH'])
-def get_patch_user_data(request):
-    if request.method == 'GET':
+class UserViewSet(viewsets.ModelViewSet):
+    queryset = User.objects.all()
+    serializer_class = CustomUserSerializer
+    lookup_field = 'username'
+
+    def get_permissions(self):
+
+        if self.action in ['list', 'create', 'retrieve', 'update', 'partial_update', 'destroy']:
+            permission_classes = [IsAdmin]
+        else:
+            permission_classes = [permissions.IsAuthenticated]
+        return [permission() for permission in permission_classes]
+
+    def retrieve_me(self, request):
         user = User.objects.get(username=request.user)
         serializer = CustomUserSerializer(user)
         return Response(serializer.data)
-    else:
+
+    def partial_update_me(self, request, pk=None):
         user = User.objects.get(username=request.user)
         serializer = CustomUserSerializer(
             user, data=request.data, partial=True)
@@ -65,10 +77,3 @@ def get_patch_user_data(request):
                 serializer.save()
             return Response(serializer.data, status=status.HTTP_200_OK)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-
-
-class UserViewSet(viewsets.ModelViewSet):
-    queryset = User.objects.all()
-    serializer_class = CustomUserSerializer
-    lookup_field = 'username'
-    permission_classes = (IsAdmin,)
