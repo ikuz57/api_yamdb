@@ -1,4 +1,5 @@
 from django.shortcuts import get_object_or_404
+from django.db.models import Avg
 from django_filters.rest_framework import DjangoFilterBackend
 from rest_framework import filters, mixins, viewsets
 
@@ -41,7 +42,8 @@ class GenresViewSet(ListCreateDelete):
 
 
 class TitlesViewSet(viewsets.ModelViewSet):
-    queryset = Title.objects.order_by('id')
+    queryset = (Title.objects.annotate(rating=Avg('reviews__score')).
+                order_by('id'))
     filterset_class = TitleFilterSet
     filter_backends = (DjangoFilterBackend,)
 

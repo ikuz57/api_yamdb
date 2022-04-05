@@ -53,9 +53,23 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = CustomUserSerializer
     lookup_field = 'username'
 
+    # Переписал код в один вьюсет. из-за пермишенов там декоратором
+    # action не обойтись, поэтому появился метод get_permissions,
+    # который определяет какой пермишен когда срабатывает.
+    # Если в экшенах прописать IsAuthorized, то IsAdmin
+    # из permission_classes его перекрывает и 3 теста валятся.
+    # Поэтому такое решение.
+
     def get_permissions(self):
 
-        if self.action in ['list', 'create', 'retrieve', 'update', 'partial_update', 'destroy']:
+        if self.action in [
+            'list',
+            'create',
+            'retrieve',
+            'update',
+            'partial_update',
+            'destroy'
+        ]:
             permission_classes = [IsAdmin]
         else:
             permission_classes = [permissions.IsAuthenticated]

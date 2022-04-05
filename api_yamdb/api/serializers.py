@@ -1,6 +1,4 @@
 from django.contrib.auth import get_user_model
-from django.db.models import Avg
-from django.shortcuts import get_object_or_404
 from rest_framework import serializers, status
 from rest_framework.exceptions import ValidationError
 from rest_framework.validators import UniqueTogetherValidator
@@ -38,7 +36,7 @@ class TitleCreateSerialaizer(serializers.ModelSerializer):
     class Meta:
         model = Title
         fields = ('id', 'name', 'year', 'description', 'genre', 'category',)
-        read_only_fields = ('genre', 'category',)
+        read_only_fields = ('genre', 'category', )
 
         validators = [
             UniqueTogetherValidator(
@@ -54,7 +52,7 @@ class TitleSerialaizer(serializers.ModelSerializer):
         required=True,
     )
     category = CategorySerialaizer(required=True)
-    rating = serializers.SerializerMethodField()
+    rating = serializers.IntegerField()
 
     class Meta:
         model = Title
@@ -62,21 +60,6 @@ class TitleSerialaizer(serializers.ModelSerializer):
             'id', 'name', 'year', 'rating', 'description', 'genre',
             'category',
         )
-
-    def get_rating(self, obj):
-        if Review.objects.filter(
-                title__name=obj.name,
-                title__year=obj.year,
-                title__category=obj.category
-        ).count():
-            title = get_object_or_404(
-                Title,
-                name=obj.name,
-                year=obj.year,
-                category=obj.category)
-            rating = title.reviews.aggregate(rating=Avg('score'))
-            return round(rating.get('rating'))
-        return None
 
 
 class ReviewSerializer(serializers.ModelSerializer):

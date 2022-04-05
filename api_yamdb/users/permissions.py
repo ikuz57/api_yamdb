@@ -6,32 +6,26 @@ User = get_user_model()
 
 
 class IsModerator(permissions.BasePermission):
-
     def has_permission(self, request, view):
         if request.user.is_anonymous:
             return False
-        username = request.user
         return request.user.role == MODERATOR
 
     def has_object_permission(self, request, view, obj):
         if request.user.is_anonymous:
             return False
-        username = request.user
         return request.user.role == MODERATOR
 
 
 class IsAdmin(permissions.BasePermission):
-
     def has_permission(self, request, view):
         if request.user.is_anonymous:
             return False
-        username = request.user
         return request.user.role == ADMIN
 
     def has_object_permission(self, request, view, obj):
         if request.user.is_anonymous:
             return False
-        username = request.user
         return request.user.role == ADMIN
 
 
