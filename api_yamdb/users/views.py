@@ -53,6 +53,8 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = CustomUserSerializer
     lookup_field = 'username'
 
+    # метод get_permissions оставлен,
+    # так как без него не проходят тесты
     def get_permissions(self):
 
         if self.action in [
