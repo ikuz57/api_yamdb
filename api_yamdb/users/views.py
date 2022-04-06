@@ -53,13 +53,6 @@ class UserViewSet(viewsets.ModelViewSet):
     serializer_class = CustomUserSerializer
     lookup_field = 'username'
 
-    # Переписал код в один вьюсет. из-за пермишенов там декоратором
-    # action не обойтись, поэтому появился метод get_permissions,
-    # который определяет какой пермишен когда срабатывает.
-    # Если в экшенах прописать IsAuthorized, то IsAdmin
-    # из permission_classes его перекрывает и 3 теста валятся.
-    # Поэтому такое решение.
-
     def get_permissions(self):
 
         if self.action in [
@@ -76,13 +69,13 @@ class UserViewSet(viewsets.ModelViewSet):
         return [permission() for permission in permission_classes]
 
     def retrieve_me(self, request):
-        user = User.objects.get(username=request.user)
-        serializer = CustomUserSerializer(user)
-        return Response(serializer.data)
+        user = request.user
+        serializer = self.get_serializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
     def partial_update_me(self, request, pk=None):
-        user = User.objects.get(username=request.user)
-        serializer = CustomUserSerializer(
+        user = request.user
+        serializer = self.get_serializer(
             user, data=request.data, partial=True)
         if serializer.is_valid():
             if user.role != ADMIN:
